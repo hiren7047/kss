@@ -13,8 +13,8 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-# Configuration
-APP_DIR="/var/www/kss"
+# Configuration (git clone creates kss/ subfolder)
+APP_DIR="/var/www/kss/kss"
 BACKEND_DIR="$APP_DIR/backend"
 FRONTEND_DIR="$APP_DIR/frontend"
 MAINSITE_DIR="$APP_DIR/mainsite"
@@ -55,6 +55,7 @@ fi
 # Navigate to app directory
 if [ ! -d "$APP_DIR" ]; then
     echo -e "${RED}Application directory $APP_DIR does not exist!${NC}"
+    echo "Expected /var/www/kss/kss (after: git clone ... /var/www/kss)"
     exit 1
 fi
 
@@ -62,19 +63,16 @@ cd "$APP_DIR"
 
 # Deploy Backend
 echo -e "\n${GREEN}Deploying Backend...${NC}"
-cd "$BACKEND_DIR"
-
-if [ ! -f ".env" ]; then
+if [ ! -f "$BACKEND_DIR/.env" ]; then
     echo -e "${YELLOW}Warning: .env file not found. Please create it before deploying.${NC}"
     echo "See DEPLOYMENT_GUIDE.md for required environment variables."
 fi
 
+cd "$BACKEND_DIR"
 echo "Installing backend dependencies..."
-npm install --production
-
+npm install
 echo "Restarting backend with PM2..."
 pm2 restart kss-backend || pm2 start src/server.js --name kss-backend
-
 pm2 save
 
 # Deploy Frontend (Admin Panel)

@@ -115,7 +115,7 @@ sudo systemctl restart mongod
 
 ### 3.1 Install Node.js 20.x (LTS)
 ```bash
-curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
 sudo apt install -y nodejs
 
 # Verify installation
@@ -143,28 +143,22 @@ sudo systemctl enable nginx
 
 ### 4.2 Configure Nginx
 
-Create configuration files (see `nginx-configs/` folder for detailed configs):
+**Important:** Copy configs from the repo. Do **not** create them with `nano`. The app lives at `/var/www/kss/kss` after `git clone` (clone creates a `kss` subfolder).
 
-**Main Site (kss.org):**
 ```bash
-sudo nano /etc/nginx/sites-available/kss.org
-```
+# Clone first (see Step 5), then copy configs from repo:
+sudo cp /var/www/kss/kss/nginx-configs/kss.org.conf /etc/nginx/sites-available/kss.org
+sudo cp /var/www/kss/kss/nginx-configs/admin.kss.org.conf /etc/nginx/sites-available/admin.kss.org
+sudo cp /var/www/kss/kss/nginx-configs/api.kss.org.conf /etc/nginx/sites-available/api.kss.org
 
-**Admin Panel (admin.kss.org):**
-```bash
-sudo nano /etc/nginx/sites-available/admin.kss.org
-```
+# Remove default site and any broken symlinks
+sudo rm -f /etc/nginx/sites-enabled/default
+sudo rm -f /etc/nginx/sites-enabled/kss.org /etc/nginx/sites-enabled/admin.kss.org /etc/nginx/sites-enabled/api.kss.org
 
-**API (api.kss.org) - Optional:**
-```bash
-sudo nano /etc/nginx/sites-available/api.kss.org
-```
-
-Enable sites:
-```bash
+# Enable KSS sites
 sudo ln -s /etc/nginx/sites-available/kss.org /etc/nginx/sites-enabled/
 sudo ln -s /etc/nginx/sites-available/admin.kss.org /etc/nginx/sites-enabled/
-# sudo ln -s /etc/nginx/sites-available/api.kss.org /etc/nginx/sites-enabled/
+# Optional: sudo ln -s /etc/nginx/sites-available/api.kss.org /etc/nginx/sites-enabled/
 ```
 
 Test and reload Nginx:
@@ -172,6 +166,8 @@ Test and reload Nginx:
 sudo nginx -t
 sudo systemctl reload nginx
 ```
+
+Configs are **HTTP-only** initially. After sites work, run Certbot (Step 7) to add HTTPS.
 
 ---
 
@@ -186,31 +182,34 @@ cd /var/www/kss
 
 ### 5.2 Clone or Upload Code
 ```bash
-# Option 1: If using Git
-git clone YOUR_REPO_URL .
+# Option 1: Git clone (creates /var/www/kss/kss/ with backend, frontend, mainsite)
+git clone https://github.com/hiren7047/kss.git
 
-# Option 2: Upload via SCP/SFTP
-# scp -r /path/to/KSS/* user@your-vps:/var/www/kss/
+# App root is then: /var/www/kss/kss
+# Option 2: Clone into current dir so backend/frontend/mainsite are directly in /var/www/kss:
+# git clone https://github.com/hiren7047/kss.git .
 ```
+
+If you use `git clone ... kss` (default), the app root is **`/var/www/kss/kss`**. All paths below use that.
 
 ### 5.3 Install Dependencies
 
 **Backend:**
 ```bash
-cd /var/www/kss/backend
-npm install --production
+cd /var/www/kss/kss/backend
+npm install
 ```
 
 **Frontend (Admin Panel):**
 ```bash
-cd /var/www/kss/frontend
+cd /var/www/kss/kss/frontend
 npm install
 npm run build
 ```
 
 **Mainsite:**
 ```bash
-cd /var/www/kss/mainsite
+cd /var/www/kss/kss/mainsite
 npm install
 npm run build
 ```
@@ -221,7 +220,8 @@ npm run build
 
 ### 6.1 Backend Environment (.env)
 ```bash
-cd /var/www/kss/backend
+cd /var/www/kss/kss/backend
+cp ../env-examples/backend.env.example .env
 nano .env
 ```
 
@@ -260,7 +260,8 @@ RAZORPAY_WEBHOOK_SECRET=your_webhook_secret
 
 ### 6.2 Frontend Environment (.env.production)
 ```bash
-cd /var/www/kss/frontend
+cd /var/www/kss/kss/frontend
+cp ../env-examples/frontend.env.example .env.production
 nano .env.production
 ```
 
@@ -272,7 +273,8 @@ VITE_API_URL=https://api.kss.org/api
 
 ### 6.3 Mainsite Environment (.env.production)
 ```bash
-cd /var/www/kss/mainsite
+cd /var/www/kss/kss/mainsite
+cp ../env-examples/mainsite.env.example .env.production
 nano .env.production
 ```
 
@@ -317,7 +319,7 @@ sudo certbot renew --dry-run
 
 ### 8.1 Start Backend API
 ```bash
-cd /var/www/kss/backend
+cd /var/www/kss/kss/backend
 pm2 start src/server.js --name kss-backend
 pm2 save
 pm2 startup
@@ -383,7 +385,7 @@ Or manually create via MongoDB or API.
 
 ### 11.2 Seed Initial Data (Optional)
 ```bash
-cd /var/www/kss/backend
+cd /var/www/kss/kss/backend
 npm run seed:cms
 npm run seed:transparency
 npm run seed:events
@@ -395,7 +397,7 @@ npm run seed:events
 
 ### 12.1 Update Code
 ```bash
-cd /var/www/kss
+cd /var/www/kss/kss
 
 # Pull latest code
 git pull origin main
@@ -406,20 +408,20 @@ git pull origin main
 ### 12.2 Rebuild Frontend Apps
 ```bash
 # Admin Panel
-cd /var/www/kss/frontend
+cd /var/www/kss/kss/frontend
 npm install
 npm run build
 
 # Main Site
-cd /var/www/kss/mainsite
+cd /var/www/kss/kss/mainsite
 npm install
 npm run build
 ```
 
 ### 12.3 Restart Backend
 ```bash
-cd /var/www/kss/backend
-npm install --production
+cd /var/www/kss/kss/backend
+npm install
 pm2 restart kss-backend
 ```
 
@@ -482,7 +484,7 @@ sudo nano /etc/logrotate.d/kss
 
 Add:
 ```
-/var/www/kss/backend/logs/*.log {
+/var/www/kss/kss/backend/logs/*.log {
     daily
     rotate 14
     compress
@@ -493,7 +495,7 @@ Add:
 ```
 
 ### MongoDB Backup Script
-Create `/var/www/kss/scripts/backup-mongodb.sh`:
+Create `/var/www/kss/kss/scripts/backup-mongodb.sh`:
 ```bash
 #!/bin/bash
 BACKUP_DIR="/var/backups/mongodb"
@@ -512,17 +514,19 @@ chmod +x /var/www/kss/scripts/backup-mongodb.sh
 Add to crontab:
 ```bash
 crontab -e
-# Add: 0 2 * * * /var/www/kss/scripts/backup-mongodb.sh
+# Add: 0 2 * * * /var/www/kss/kss/scripts/backup-mongodb.sh
 ```
 
 ---
 
 ## 🆘 Troubleshooting
 
+**Common deployment errors** (e.g. `backend/package.json` missing, Nginx symlink errors, wrong paths after `git clone`): see **DEPLOYMENT_FIX.md** for step‑by‑step fixes.
+
 ### Backend not starting
 ```bash
 pm2 logs kss-backend
-cd /var/www/kss/backend
+cd /var/www/kss/kss/backend
 node src/server.js  # Run directly to see errors
 ```
 

@@ -47,10 +47,11 @@ sudo apt install -y nginx
 sudo mkdir -p /var/www/kss
 sudo chown -R $USER:$USER /var/www/kss
 cd /var/www/kss
+# git clone creates kss/ subfolder → app root = /var/www/kss/kss
 
-# Upload/clone code here
+# git clone https://github.com/hiren7047/kss.git  → creates kss/
 # Then:
-cd backend && npm install --production
+cd kss/backend && npm install
 cd ../frontend && npm install && npm run build
 cd ../mainsite && npm install && npm run build
 ```
@@ -58,32 +59,33 @@ cd ../mainsite && npm install && npm run build
 ### 6. Configure Environment
 ```bash
 # Backend
-cd /var/www/kss/backend
+cd /var/www/kss/kss/backend
 cp ../env-examples/backend.env.example .env
 nano .env  # Edit with your values
 
 # Frontend
-cd /var/www/kss/frontend
+cd /var/www/kss/kss/frontend
 cp ../env-examples/frontend.env.example .env.production
 nano .env.production  # Edit API URL
 
 # Mainsite
-cd /var/www/kss/mainsite
+cd /var/www/kss/kss/mainsite
 cp ../env-examples/mainsite.env.example .env.production
 nano .env.production  # Edit API URL
 ```
 
 ### 7. Nginx Configuration
 ```bash
-# Copy configs
-sudo cp nginx-configs/kss.org.conf /etc/nginx/sites-available/kss.org
-sudo cp nginx-configs/admin.kss.org.conf /etc/nginx/sites-available/admin.kss.org
-# Optional: sudo cp nginx-configs/api.kss.org.conf /etc/nginx/sites-available/api.kss.org
+# Copy configs from repo (do NOT create with nano)
+sudo cp /var/www/kss/kss/nginx-configs/kss.org.conf /etc/nginx/sites-available/kss.org
+sudo cp /var/www/kss/kss/nginx-configs/admin.kss.org.conf /etc/nginx/sites-available/admin.kss.org
+# Optional: sudo cp .../api.kss.org.conf /etc/nginx/sites-available/api.kss.org
 
-# Enable sites
+# Remove default & broken symlinks, then enable
+sudo rm -f /etc/nginx/sites-enabled/default
+sudo rm -f /etc/nginx/sites-enabled/kss.org /etc/nginx/sites-enabled/admin.kss.org
 sudo ln -s /etc/nginx/sites-available/kss.org /etc/nginx/sites-enabled/
 sudo ln -s /etc/nginx/sites-available/admin.kss.org /etc/nginx/sites-enabled/
-# Optional: sudo ln -s /etc/nginx/sites-available/api.kss.org /etc/nginx/sites-enabled/
 
 # Test and reload
 sudo nginx -t && sudo systemctl reload nginx
@@ -99,7 +101,7 @@ sudo certbot --nginx -d admin.kss.org
 
 ### 9. Start Backend
 ```bash
-cd /var/www/kss/backend
+cd /var/www/kss/kss/backend
 pm2 start src/server.js --name kss-backend
 pm2 save
 pm2 startup
@@ -107,7 +109,7 @@ pm2 startup
 
 ### 10. Create Admin User
 ```bash
-cd /var/www/kss/backend
+cd /var/www/kss/kss/backend
 npm run seed:admin
 ```
 
@@ -138,18 +140,18 @@ npm run seed:admin
 
 Use the deploy script:
 ```bash
-cd /var/www/kss
+cd /var/www/kss/kss
 chmod +x deploy.sh
 ./deploy.sh
 ```
 
 Or manually:
 ```bash
-cd /var/www/kss
+cd /var/www/kss/kss
 git pull  # or upload new files
 cd frontend && npm install && npm run build
 cd ../mainsite && npm install && npm run build
-cd ../backend && npm install --production
+cd ../backend && npm install
 pm2 restart kss-backend
 sudo nginx -t && sudo systemctl reload nginx
 ```

@@ -1,12 +1,32 @@
+# Dependencies
 backend/node_modules
-backend/.env
-backend/package-lock.json
-backend/package.json
-backend/README.md
-backend/LICENSE
-backend/README.md
-backend/README.md
-
 frontend/node_modules
-
 mainsite/node_modules
+
+# Environment (never commit secrets)
+backend/.env
+frontend/.env
+frontend/.env.local
+frontend/.env.production
+mainsite/.env
+mainsite/.env.local
+mainsite/.env.production
+
+# Build outputs
+frontend/dist
+mainsite/dist
+
+# Logs
+backend/logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
