@@ -1,0 +1,294 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&family=Noto+Sans+Gujarati:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 
+  Krushna Sada Sahayate - Design System
+  Theme: Spiritual Hindu NGO with Saffron, Crimson, Gold
+  Inspired by: Temple architecture, Bhakti tradition, Modern seva
+*/
+
+@layer base {
+  :root {
+    /* Core Spiritual Colors */
+    --background: 35 30% 98%;
+    --foreground: 15 25% 15%;
+
+    --card: 35 25% 97%;
+    --card-foreground: 15 25% 15%;
+
+    --popover: 35 30% 98%;
+    --popover-foreground: 15 25% 15%;
+
+    /* Saffron Primary - Sacred & Energetic */
+    --primary: 22 95% 55%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Warm Cream Secondary */
+    --secondary: 35 35% 93%;
+    --secondary-foreground: 15 25% 20%;
+
+    /* Muted Temple Stone */
+    --muted: 30 20% 92%;
+    --muted-foreground: 15 15% 45%;
+
+    /* Gold Accent - Divine & Prosperity */
+    --accent: 43 70% 55%;
+    --accent-foreground: 15 25% 15%;
+
+    /* Deep Crimson - Shakti & Power */
+    --destructive: 0 72% 35%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 30 25% 88%;
+    --input: 30 25% 88%;
+    --ring: 22 95% 55%;
+
+    --radius: 0.75rem;
+
+    /* Extended Spiritual Palette */
+    --saffron: 22 95% 55%;
+    --saffron-light: 25 90% 70%;
+    --saffron-dark: 20 95% 45%;
+    
+    --crimson: 0 72% 35%;
+    --crimson-light: 0 65% 50%;
+    --crimson-dark: 0 80% 25%;
+    
+    --gold: 43 70% 55%;
+    --gold-light: 45 75% 70%;
+    --gold-dark: 40 70% 45%;
+    
+    --temple-cream: 35 35% 96%;
+    --temple-stone: 30 20% 85%;
+    
+    /* Spiritual Gradients */
+    --gradient-divine: linear-gradient(135deg, hsl(22, 95%, 55%) 0%, hsl(0, 72%, 35%) 100%);
+    --gradient-sunrise: linear-gradient(180deg, hsl(35, 40%, 95%) 0%, hsl(25, 60%, 90%) 100%);
+    --gradient-gold: linear-gradient(135deg, hsl(43, 70%, 55%) 0%, hsl(35, 80%, 45%) 100%);
+    --gradient-spiritual: linear-gradient(135deg, hsl(25, 90%, 70%) 0%, hsl(43, 70%, 55%) 50%, hsl(0, 65%, 50%) 100%);
+    
+    /* Shadows */
+    --shadow-soft: 0 4px 20px -4px hsl(22, 95%, 55%, 0.15);
+    --shadow-divine: 0 10px 40px -10px hsl(0, 72%, 35%, 0.25);
+    --shadow-card: 0 4px 16px -4px hsl(30, 20%, 20%, 0.1);
+    
+    /* Sidebar */
+    --sidebar-background: 35 30% 97%;
+    --sidebar-foreground: 15 25% 25%;
+    --sidebar-primary: 22 95% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 35 35% 93%;
+    --sidebar-accent-foreground: 15 25% 20%;
+    --sidebar-border: 30 25% 88%;
+    --sidebar-ring: 22 95% 55%;
+  }
+
+  .dark {
+    --background: 15 20% 8%;
+    --foreground: 35 25% 95%;
+
+    --card: 15 18% 12%;
+    --card-foreground: 35 25% 95%;
+
+    --popover: 15 18% 12%;
+    --popover-foreground: 35 25% 95%;
+
+    --primary: 22 90% 58%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 15 15% 18%;
+    --secondary-foreground: 35 25% 90%;
+
+    --muted: 15 15% 20%;
+    --muted-foreground: 30 15% 60%;
+
+    --accent: 43 65% 50%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 65% 45%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 15 15% 22%;
+    --input: 15 15% 22%;
+    --ring: 22 90% 58%;
+
+    --sidebar-background: 15 18% 10%;
+    --sidebar-foreground: 35 25% 90%;
+    --sidebar-primary: 22 90% 58%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 15 15% 18%;
+    --sidebar-accent-foreground: 35 25% 90%;
+    --sidebar-border: 15 15% 22%;
+    --sidebar-ring: 22 90% 58%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Poppins', 'Noto Sans Gujarati', 'Noto Sans Devanagari', sans-serif;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', 'Noto Sans Gujarati', 'Noto Sans Devanagari', serif;
+  }
+
+  /* Gujarati text optimization */
+  [lang="gu"], .lang-gu {
+    font-family: 'Noto Sans Gujarati', 'Poppins', sans-serif;
+  }
+
+  /* Hindi/Sanskrit text optimization */
+  [lang="hi"], .lang-hi {
+    font-family: 'Noto Sans Devanagari', 'Poppins', sans-serif;
+  }
+}
+
+@layer components {
+  /* Hero Button Variants */
+  .btn-hero {
+    @apply bg-primary text-primary-foreground px-8 py-4 rounded-full font-semibold text-lg shadow-lg;
+    @apply hover:shadow-xl transition-all duration-300;
+    @apply hover:scale-105 active:scale-95;
+  }
+
+  .btn-hero-outline {
+    @apply border-2 border-primary-foreground text-primary-foreground px-8 py-4 rounded-full font-semibold text-lg;
+    @apply hover:bg-primary-foreground hover:text-primary transition-all duration-300;
+    @apply hover:scale-105 active:scale-95;
+  }
+
+  .btn-gold {
+    @apply bg-accent text-accent-foreground px-6 py-3 rounded-full font-semibold;
+    @apply hover:shadow-lg transition-all duration-300;
+  }
+
+  /* Durga Card Styles */
+  .durga-card {
+    @apply bg-card rounded-2xl p-6 shadow-md border border-border;
+    @apply hover:shadow-xl hover:-translate-y-2 transition-all duration-500;
+    @apply relative overflow-hidden;
+  }
+
+  .durga-card::before {
+    content: '';
+    @apply absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-accent to-destructive;
+  }
+
+  /* Impact Counter */
+  .impact-counter {
+    @apply bg-card rounded-2xl p-8 text-center shadow-md;
+    @apply border border-border hover:shadow-lg transition-shadow;
+  }
+
+  /* Section Divider */
+  .section-divider {
+    @apply relative my-16;
+  }
+
+  .section-divider::before {
+    content: '॥';
+    @apply absolute left-1/2 -translate-x-1/2 text-4xl text-primary/30;
+    font-family: 'Playfair Display', serif;
+  }
+
+  /* Spiritual Quote Box */
+  .spiritual-quote {
+    @apply bg-gradient-to-r from-primary/5 via-accent/5 to-destructive/5;
+    @apply border-l-4 border-primary p-6 rounded-r-xl italic;
+  }
+
+  /* Temple Pattern Background */
+  .temple-pattern {
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a853' fill-opacity='0.08'%3E%3Cpath d='M30 30c0-5.523 4.477-10 10-10s10 4.477 10 10-4.477 10-10 10-10-4.477-10-10zm0 0c0 5.523-4.477 10-10 10S10 35.523 10 30s4.477-10 10-10 10 4.477 10 10z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  /* Animated gradient text */
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary via-accent to-destructive;
+    background-size: 200% auto;
+    animation: shine 3s ease-in-out infinite;
+  }
+
+  @keyframes shine {
+    0%, 100% { background-position: 0% center; }
+    50% { background-position: 100% center; }
+  }
+
+  /* Float animation for decorative elements */
+  .float-animation {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+  }
+
+  /* Glow effect for CTAs */
+  .glow-primary {
+    box-shadow: 0 0 30px hsl(22, 95%, 55%, 0.3);
+  }
+
+  .glow-gold {
+    box-shadow: 0 0 30px hsl(43, 70%, 55%, 0.3);
+  }
+
+  /* Nav link styles */
+  .nav-link {
+    @apply relative text-foreground/80 hover:text-primary transition-colors duration-300;
+  }
+
+  .nav-link::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300;
+  }
+
+  .nav-link:hover::after {
+    @apply w-full;
+  }
+
+  .nav-link-active {
+    @apply text-primary font-medium;
+  }
+
+  .nav-link-active::after {
+    @apply w-full;
+  }
+}
+
+@layer utilities {
+  .text-shadow-spiritual {
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .bg-divine-gradient {
+    background: var(--gradient-divine);
+  }
+
+  .bg-sunrise-gradient {
+    background: var(--gradient-sunrise);
+  }
+
+  .bg-gold-gradient {
+    background: var(--gradient-gold);
+  }
+
+  .bg-spiritual-gradient {
+    background: var(--gradient-spiritual);
+  }
+}
