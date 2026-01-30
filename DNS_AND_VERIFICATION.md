@@ -297,3 +297,62 @@ sudo nginx -t && sudo systemctl reload nginx
 ### Step 4: Verify
 
 Browser માં **https://krushnasadasahayte.org** open કરો; Network tab માં requests **https://krushnasadasahayte.org/api/...** પર જવી જોઈએ, api.kss.org પર નહીં.
+
+---
+
+## 9. Fix: Admin login / ERR_NAME_NOT_RESOLVED (admin panel API)
+
+જો **admin.krushnasadasahayte.org/login** પર login કરતાં **net::ERR_NAME_NOT_RESOLVED** આવે અને login request fail થાય, તો admin frontend **wrong API URL** થી build થયેલો છે (e.g. api.kss.org). Fix:
+
+### Step 1: Admin frontend env set કરો (server પર)
+
+```bash
+cd /var/www/kss/kss/frontend
+cat .env.production
+```
+
+જો `VITE_API_URL` **api.kss.org** અથવા **api.krushnasadasahayte.org** હોય તો:
+
+```bash
+echo 'VITE_API_URL=https://admin.krushnasadasahayte.org/api' > .env.production
+```
+
+### Step 2: Admin frontend ફરી build કરો
+
+```bash
+cd /var/www/kss/kss/frontend
+npm run build
+```
+
+### Step 3: Nginx માં /api proxy (admin site)
+
+**જો Certbot થી SSL already enable છે**, whole config overwrite ન કરો. ફક્ત **location /api** block add કરો:
+
+```bash
+sudo nano /etc/nginx/sites-available/admin.krushnasadasahayte.org
+```
+
+`server { ... }` ની અંદર, `location /uploads {` પહેલાં આ block paste કરો:
+
+```nginx
+    # API proxy (admin panel calls same-origin /api)
+    location /api {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 300s;
+    }
+```
+
+Save અને exit. પછી:
+
+```bash
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+### Step 4: Verify
+
+Browser માં **https://admin.krushnasadasahayte.org/login** open કરો; Sign in કરો. Network tab માં login request **https://admin.krushnasadasahayte.org/api/...** પર જવી જોઈએ, fail નહીં.
