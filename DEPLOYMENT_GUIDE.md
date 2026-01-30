@@ -27,13 +27,16 @@ This guide covers deployment of:
 
 ### 2. Domain DNS Configuration
 
-Point your domain DNS records to your VPS IP:
+Point your domain DNS records to your VPS IP. **Full step-by-step and verification:** see **[DNS_AND_VERIFICATION.md](DNS_AND_VERIFICATION.md)**.
+
+**Current server IP:** `82.112.234.87`
 
 ```
-Type    Name    Value           TTL
-A       @       YOUR_VPS_IP     3600
-A       admin   YOUR_VPS_IP     3600
-A       api     YOUR_VPS_IP     3600
+Type    Name    Value              TTL
+A       @       82.112.234.87      3600
+A       www     82.112.234.87      3600
+A       admin   82.112.234.87      3600
+A       api     82.112.234.87      3600   (optional)
 ```
 
 ---
@@ -349,6 +352,8 @@ See `nginx-configs/` directory for complete Nginx configurations:
 
 ## ✅ Step 10: Verify Deployment
 
+For a **DNS setup checklist** and **verification commands** (including server IP and management), see **[DNS_AND_VERIFICATION.md](DNS_AND_VERIFICATION.md)**.
+
 ### 10.1 Check Services
 ```bash
 # PM2 status
@@ -497,6 +502,40 @@ npm run build
 ```
 
 After this, `frontend` is normal tracked files and future clones/pulls will get the full admin panel.
+
+### "This site can't be reached" / ERR_CONNECTION_TIMED_OUT
+
+When the browser shows **"82.112.234.87 took too long to respond"** or **ERR_CONNECTION_TIMED_OUT**, the request never reaches the server. Fix in this order:
+
+**1. On the server — allow HTTP/HTTPS in UFW**
+```bash
+sudo ufw allow OpenSSH
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+sudo ufw enable
+sudo ufw status
+```
+Ensure **80/tcp** and **443/tcp** show **ALLOW**.
+
+**2. On the server — Nginx running and listening**
+```bash
+sudo systemctl status nginx
+sudo systemctl start nginx
+sudo systemctl enable nginx
+ss -tlnp | grep -E ':80|:443'
+```
+You should see nginx listening on 0.0.0.0:80 (and :443 if SSL is set up). If not, run `sudo nginx -t` then `sudo systemctl restart nginx`.
+
+**3. VPS / Hostinger firewall**
+If the server is on **Hostinger** or another VPS provider, open ports in their panel too:
+- **Hostinger:** hPanel → VPS → Firewall (or Security) → add rules for **TCP 80** and **TCP 443**.
+- Otherwise: VPS dashboard → Firewall / Security / Network → allow inbound **80** and **443**.
+
+**4. Quick test from the server**
+```bash
+curl -I http://127.0.0.1
+```
+If this returns HTTP headers, Nginx works locally; the problem is firewall or network. If it fails, fix Nginx config and restart nginx first.
 
 ---
 
