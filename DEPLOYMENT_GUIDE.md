@@ -203,9 +203,14 @@ npm install
 **Frontend (Admin Panel):**
 ```bash
 cd /var/www/kss/kss/frontend
+# Ensure index.html exists (required for Vite build)
+ls -la index.html
 npm install
 npm run build
 ```
+
+> **If build fails with "Could not resolve entry module 'index.html'":**  
+> The `index.html` file must be in the frontend directory. Verify with `ls -la index.html`. If it's missing, ensure you cloned/pulled the full repo (e.g. `git pull` from `/var/www/kss/kss`) or copy `frontend/index.html` from your source.
 
 **Mainsite:**
 ```bash
