@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 const memberSchema = new mongoose.Schema({
   memberId: {
@@ -213,6 +214,19 @@ const memberSchema = new mongoose.Schema({
     type: String,
     default: null
   },
+  // Volunteer login credentials (only for volunteers)
+  registrationId: {
+    type: String,
+    unique: true,
+    sparse: true, // Allow null values but enforce uniqueness when present
+    trim: true,
+    index: true
+  },
+  password: {
+    type: String,
+    trim: true,
+    select: false // Don't include in queries by default
+  },
   softDelete: {
     type: Boolean,
     default: false,
@@ -230,6 +244,22 @@ memberSchema.pre('save', function(next) {
   this.name = parts.join(' ').trim();
   next();
 });
+
+// Hash password before saving (only for volunteers)
+memberSchema.pre('save', async function(next) {
+  if (!this.isModified('password') || !this.password) return next();
+  // Only hash password if member is a volunteer
+  if (this.memberType === 'volunteer' && this.password) {
+    this.password = await bcrypt.hash(this.password, 12);
+  }
+  next();
+});
+
+// Compare password method (for volunteers)
+memberSchema.methods.comparePassword = async function(candidatePassword) {
+  if (!this.password) return false;
+  return await bcrypt.compare(candidatePassword, this.password);
+};
 
 // Index for efficient queries
 memberSchema.index({ memberId: 1, softDelete: 1 });

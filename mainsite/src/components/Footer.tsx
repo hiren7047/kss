@@ -1,6 +1,6 @@
 import { forwardRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Phone, Mail, MapPin, Facebook, Instagram, Youtube, Twitter } from 'lucide-react';
+import { Phone, Mail, MapPin, Facebook, Instagram, Youtube, Twitter, MessageCircle, Send, Linkedin } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { publicApi } from '@/lib/api';
@@ -72,7 +72,7 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
             <p className={`text-sm text-background/80 leading-relaxed ${langClass}`}>
               {t('footer.description')}
             </p>
-            <div className="flex gap-4">
+            <div className="flex gap-4 flex-wrap">
               {socialMedia.facebook && (
                 <a href={socialMedia.facebook} target="_blank" rel="noopener noreferrer" className="text-background/70 hover:text-accent transition-colors" aria-label="Facebook">
                   <Facebook size={20} />
@@ -91,6 +91,21 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
               {socialMedia.twitter && (
                 <a href={socialMedia.twitter} target="_blank" rel="noopener noreferrer" className="text-background/70 hover:text-accent transition-colors" aria-label="Twitter">
                   <Twitter size={20} />
+                </a>
+              )}
+              {socialMedia.whatsappCommunity && (
+                <a href={socialMedia.whatsappCommunity} target="_blank" rel="noopener noreferrer" className="text-background/70 hover:text-accent transition-colors" aria-label="WhatsApp Community">
+                  <MessageCircle size={20} />
+                </a>
+              )}
+              {socialMedia.telegram && (
+                <a href={socialMedia.telegram} target="_blank" rel="noopener noreferrer" className="text-background/70 hover:text-accent transition-colors" aria-label="Telegram">
+                  <Send size={20} />
+                </a>
+              )}
+              {socialMedia.linkedin && (
+                <a href={socialMedia.linkedin} target="_blank" rel="noopener noreferrer" className="text-background/70 hover:text-accent transition-colors" aria-label="LinkedIn">
+                  <Linkedin size={20} />
                 </a>
               )}
             </div>

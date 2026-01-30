@@ -3,6 +3,19 @@ const Donation = require('../models/Donation');
 const Expense = require('../models/Expense');
 
 /**
+ * Check and notify if wallet balance is low
+ */
+const checkLowWalletBalance = async () => {
+  try {
+    const { notifyLowWalletBalance } = require('./notificationHelper');
+    await notifyLowWalletBalance(10000); // Threshold: ₹10,000
+  } catch (error) {
+    console.error('Error checking low wallet balance:', error);
+    // Don't fail wallet update if notification check fails
+  }
+};
+
+/**
  * Update wallet balance after donation
  * @param {Number} amount - Donation amount
  */
@@ -10,6 +23,10 @@ const updateWalletAfterDonation = async (amount) => {
   const wallet = await Wallet.getWallet();
   wallet.totalDonations += amount;
   await wallet.updateBalance();
+  
+  // Check for low balance after update
+  await checkLowWalletBalance();
+  
   return wallet;
 };
 
@@ -21,6 +38,10 @@ const updateWalletAfterExpense = async (amount) => {
   const wallet = await Wallet.getWallet();
   wallet.totalExpenses += amount;
   await wallet.updateBalance();
+  
+  // Check for low balance after update
+  await checkLowWalletBalance();
+  
   return wallet;
 };
 

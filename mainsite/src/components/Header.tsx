@@ -1,7 +1,7 @@
-import { useState, forwardRef } from 'react';
+import { useState, forwardRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Heart } from 'lucide-react';
+import { Menu, X, Heart, User } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
@@ -11,9 +11,22 @@ import logo from '@/assets/logo_kss.jpg';
 
 const Header = forwardRef<HTMLElement>((_, ref) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isVolunteerLoggedIn, setIsVolunteerLoggedIn] = useState(false);
   const location = useLocation();
   const { t, language } = useLanguage();
   const langClass = language === 'gu' ? 'lang-gu' : language === 'hi' ? 'lang-hi' : '';
+
+  // Check volunteer login status
+  useEffect(() => {
+    const checkLogin = () => {
+      const token = localStorage.getItem('volunteerAccessToken');
+      setIsVolunteerLoggedIn(!!token);
+    };
+    checkLogin();
+    // Check periodically
+    const interval = setInterval(checkLogin, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Fetch site settings
   const { data: siteSettings, isError } = useQuery({
@@ -32,7 +45,6 @@ const Header = forwardRef<HTMLElement>((_, ref) => {
     { name: t('nav.durga'), path: '/durga' },
     { name: t('nav.events'), path: '/events' },
     { name: t('nav.gallery'), path: '/gallery' },
-    { name: t('nav.donate'), path: '/donate' },
     { name: t('nav.transparency'), path: '/transparency' },
     { name: t('nav.volunteer'), path: '/volunteer' },
     { name: t('nav.contact'), path: '/contact' },
@@ -71,6 +83,21 @@ const Header = forwardRef<HTMLElement>((_, ref) => {
           {/* CTA Button & Language Switcher */}
           <div className="hidden lg:flex items-center gap-4">
             <LanguageSwitcher />
+            {/* Check if volunteer is logged in */}
+            {isVolunteerLoggedIn ? (
+              <Button asChild variant="outline" className="rounded-full px-6">
+                <Link to="/volunteer/dashboard">
+                  <User className="w-4 h-4 mr-2" />
+                  <span className={langClass}>Dashboard</span>
+                </Link>
+              </Button>
+            ) : (
+              <Button asChild variant="ghost" className="rounded-full px-6">
+                <Link to="/volunteer/login">
+                  <span className={langClass}>Volunteer Login</span>
+                </Link>
+              </Button>
+            )}
             <Button asChild className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-6">
               <Link to="/donate">
                 <Heart className="w-4 h-4 mr-2" />
@@ -127,8 +154,22 @@ const Header = forwardRef<HTMLElement>((_, ref) => {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: navLinks.length * 0.05 }}
-                className="pt-4"
+                className="pt-4 space-y-3"
               >
+                {isVolunteerLoggedIn ? (
+                  <Button asChild variant="outline" className="w-full rounded-full">
+                    <Link to="/volunteer/dashboard" onClick={() => setIsOpen(false)}>
+                      <User className="w-4 h-4 mr-2" />
+                      <span className={langClass}>Dashboard</span>
+                    </Link>
+                  </Button>
+                ) : (
+                  <Button asChild variant="ghost" className="w-full rounded-full">
+                    <Link to="/volunteer/login" onClick={() => setIsOpen(false)}>
+                      <span className={langClass}>Volunteer Login</span>
+                    </Link>
+                  </Button>
+                )}
                 <Button asChild className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-full">
                   <Link to="/donate" onClick={() => setIsOpen(false)}>
                     <Heart className="w-4 h-4 mr-2" />

@@ -4,24 +4,35 @@ const { createAuditLog } = require('../utils/auditLogger');
 const { updateWalletAfterExpense, recalculateWallet } = require('../utils/walletUpdater');
 const { getPagination, createPaginationResponse } = require('../utils/pagination');
 const { createDateRangeFilter } = require('../utils/dateFilters');
+const { notifyExpensePending, notifyExpenseStatus } = require('../utils/notificationHelper');
 
 /**
  * Create a new expense
  */
-const createExpense = async (expenseData, userId, ipAddress) => {
+const createExpense = async (expenseData, userId, ipAddress, volunteerId = null) => {
   const expense = await Expense.create({
     ...expenseData,
+    submittedBy: volunteerId || null,
     approvalStatus: 'pending'
   });
 
   // Create audit log
   await createAuditLog({
-    userId,
+    userId: userId || null,
     action: 'CREATE',
     module: 'EXPENSE',
     newData: expense.toObject(),
-    ipAddress
+    ipAddress,
+    notes: volunteerId ? 'Expense submitted by volunteer' : null
   });
+
+  // Create notification for admins/accountants
+  try {
+    await notifyExpensePending(expense);
+  } catch (error) {
+    console.error('Error creating expense notification:', error);
+    // Don't fail expense creation if notification fails
+  }
 
   return expense;
 };
@@ -76,6 +87,7 @@ const getExpenses = async (query) => {
 const getExpenseById = async (id) => {
   const expense = await Expense.findOne({ _id: id, softDelete: false })
     .populate('eventId', 'name')
+    .populate('submittedBy', 'name memberId registrationId')
     .populate('approvedBy', 'name email');
   
   if (!expense) {
@@ -127,6 +139,14 @@ const approveExpense = async (id, approvalData, userId, ipAddress) => {
     newData: expense.toObject(),
     ipAddress
   });
+
+  // Create notification for expense submitter
+  try {
+    await notifyExpenseStatus(expense, approvalData.approvalStatus, userId);
+  } catch (error) {
+    console.error('Error creating expense status notification:', error);
+    // Don't fail expense approval if notification fails
+  }
 
   return expense;
 };

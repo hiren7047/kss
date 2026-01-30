@@ -10,7 +10,9 @@
     "seed:admin": "node src/scripts/seedAdmin.js",
     "seed:cms": "node src/scripts/seedCMSData.js",
     "seed:transparency": "node src/scripts/seedTransparencyData.js",
-    "seed:events": "node src/scripts/seedEventsData.js"
+    "seed:events": "node src/scripts/seedEventsData.js",
+    "seed:whatsapp": "node src/scripts/seedWhatsAppTemplates.js",
+    "seed:whatsapp": "node src/scripts/seedWhatsAppTemplates.js"
   },
   "keywords": [
     "ngo",
@@ -36,6 +38,7 @@
     "mongoose": "^8.0.3",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
+    "nodemailer": "^7.0.12",
     "pdfkit": "^0.14.0",
     "razorpay": "^2.9.6"
   },

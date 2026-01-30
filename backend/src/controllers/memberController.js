@@ -8,10 +8,15 @@ const createMember = async (req, res, next) => {
     const ipAddress = req.ip || req.connection.remoteAddress;
     const member = await memberService.createMember(req.body, req.user._id, ipAddress);
 
+    // Extract credentials if volunteer (member is already a plain object if volunteer)
+    const responseData = member;
+    
     res.status(201).json({
       success: true,
-      message: 'Member created successfully',
-      data: member
+      message: member.memberType === 'volunteer' 
+        ? 'Volunteer registered successfully. Please note the credentials.'
+        : 'Member created successfully',
+      data: responseData
     });
   } catch (error) {
     next(error);

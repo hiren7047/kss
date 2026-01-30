@@ -41,6 +41,7 @@ const getPublicSettings = async () => {
   
   // Return only public-safe data
   return {
+    branding: settings.branding,
     organizationName: settings.organizationName,
     tagline: settings.tagline,
     contactInfo: settings.contactInfo,

@@ -265,6 +265,15 @@ const submitForm = async (formId, submissionData, fileUploads, submitterInfo) =>
   form.submissionCount += 1;
   await form.save();
 
+  // Create notification for admins
+  try {
+    const { notifyFormSubmission } = require('../utils/notificationHelper');
+    await notifyFormSubmission(submission, form);
+  } catch (error) {
+    console.error('Error creating form submission notification:', error);
+    // Don't fail submission if notification fails
+  }
+
   return submission;
 };
 

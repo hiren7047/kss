@@ -15,9 +15,12 @@ import Donate from "./pages/Donate";
 import DonateEvent from "./pages/DonateEvent";
 import DonateLink from "./pages/DonateLink";
 import Volunteer from "./pages/Volunteer";
+import VolunteerLogin from "./pages/VolunteerLogin";
+import VolunteerDashboard from "./pages/VolunteerDashboard";
 import Contact from "./pages/Contact";
 import Transparency from "./pages/Transparency";
 import NotFound from "./pages/NotFound";
+import NewsletterUnsubscribe from "./pages/NewsletterUnsubscribe";
 
 const queryClient = new QueryClient();
 
@@ -41,7 +44,10 @@ const App = () => (
             <Route path="/donate/:slug" element={<DonateLink />} />
             <Route path="/transparency" element={<Transparency />} />
             <Route path="/volunteer" element={<Volunteer />} />
+            <Route path="/volunteer/login" element={<VolunteerLogin />} />
+            <Route path="/volunteer/dashboard" element={<VolunteerDashboard />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/newsletter/unsubscribe" element={<NewsletterUnsubscribe />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

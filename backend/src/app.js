@@ -23,6 +23,16 @@ const cmsRoutes = require('./routes/cmsRoutes');
 const publicRoutes = require('./routes/publicRoutes');
 const formRoutes = require('./routes/formRoutes');
 const publicFormRoutes = require('./routes/publicFormRoutes');
+const volunteerAuthRoutes = require('./routes/volunteerAuthRoutes');
+const volunteerWorkRoutes = require('./routes/volunteerWorkRoutes');
+const volunteerLeaderboardRoutes = require('./routes/volunteerLeaderboardRoutes');
+const volunteerActivityRoutes = require('./routes/volunteerActivityRoutes');
+const volunteerExpenseRoutes = require('./routes/volunteerExpenseRoutes');
+const adminVolunteerManagementRoutes = require('./routes/adminVolunteerManagementRoutes');
+const adminRoutes = require('./routes/adminRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
+const whatsAppRoutes = require('./routes/whatsAppRoutes');
+const newsletterRoutes = require('./routes/newsletterRoutes');
 
 const app = express();
 
@@ -112,8 +122,18 @@ app.use('/api/wallet', walletRoutes);
 app.use('/api/documents', documentRoutes);
 app.use('/api/audit', auditRoutes);
 app.use('/api/admin/dashboard', dashboardRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/api/cms', cmsRoutes);
 app.use('/api/forms', formRoutes);
+app.use('/api/volunteer-auth', volunteerAuthRoutes);
+app.use('/api/volunteer-work', volunteerWorkRoutes);
+app.use('/api/volunteer-leaderboard', volunteerLeaderboardRoutes);
+app.use('/api/volunteer-activities', volunteerActivityRoutes);
+app.use('/api/volunteer-expenses', volunteerExpenseRoutes);
+app.use('/api/admin/volunteers', adminVolunteerManagementRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/whatsapp', whatsAppRoutes);
+app.use('/api/newsletter', newsletterRoutes);
 
 // 404 handler
 app.use(notFound);

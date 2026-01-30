@@ -3,7 +3,18 @@ const { createAuditLog } = require('../utils/auditLogger');
 const { getPagination, createPaginationResponse } = require('../utils/pagination');
 
 const createContactSubmission = async (submissionData) => {
-  return await ContactSubmission.create(submissionData);
+  const submission = await ContactSubmission.create(submissionData);
+
+  // Create notification for admins
+  try {
+    const { notifyContactSubmission } = require('../utils/notificationHelper');
+    await notifyContactSubmission(submission);
+  } catch (error) {
+    console.error('Error creating contact submission notification:', error);
+    // Don't fail submission if notification fails
+  }
+
+  return submission;
 };
 
 const getContactSubmissions = async (query) => {

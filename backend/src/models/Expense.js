@@ -25,6 +25,12 @@ const expenseSchema = new mongoose.Schema({
     type: String,
     default: null
   },
+  submittedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Member',
+    default: null,
+    index: true
+  },
   approvedBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

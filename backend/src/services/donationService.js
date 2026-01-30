@@ -11,6 +11,7 @@ const { createDateRangeFilter } = require('../utils/dateFilters');
 const { generateDonationSlip } = require('../utils/pdfGenerator');
 const razorpayService = require('./razorpayService');
 const eventItemService = require('./eventItemService');
+const { notifyDonationReceived } = require('../utils/notificationHelper');
 const moment = require('moment');
 
 /**
@@ -56,6 +57,14 @@ const createDonation = async (donationData, userId, ipAddress) => {
     newData: donation.toObject(),
     ipAddress
   });
+
+  // Create notification for admins
+  try {
+    await notifyDonationReceived(donation);
+  } catch (error) {
+    console.error('Error creating donation notification:', error);
+    // Don't fail donation creation if notification fails
+  }
 
   return donation;
 };
@@ -467,6 +476,16 @@ const verifyRazorpayPayment = async (donationData, razorpayOrderId, razorpayPaym
     );
   }
 
+  // Create notification for admins if donation is completed
+  if (donation.status === 'completed') {
+    try {
+      await notifyDonationReceived(donation);
+    } catch (error) {
+      console.error('Error creating donation notification:', error);
+      // Don't fail donation creation if notification fails
+    }
+  }
+
   return donation;
 };
 
@@ -559,6 +578,14 @@ const handleRazorpayWebhook = async (event, payload) => {
                   }
                 );
               }
+
+              // Create notification for admins
+              try {
+                await notifyDonationReceived(donation);
+              } catch (error) {
+                console.error('Error creating donation notification from webhook:', error);
+                // Don't fail donation creation if notification fails
+              }
             }
           } catch (error) {
             console.error('Error creating donation from webhook:', error);
@@ -574,6 +601,14 @@ const handleRazorpayWebhook = async (event, payload) => {
             // Update wallet if not already updated
             if (paymentTransaction.status === 'captured') {
               await updateWalletAfterDonation(donation.amount);
+            }
+
+            // Create notification for admins
+            try {
+              await notifyDonationReceived(donation);
+            } catch (error) {
+              console.error('Error creating donation notification from webhook:', error);
+              // Don't fail webhook processing if notification fails
             }
           }
 

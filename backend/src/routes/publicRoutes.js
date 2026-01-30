@@ -8,10 +8,12 @@ const ImpactNumber = require('../models/ImpactNumber');
 const Event = require('../models/Event');
 const EventItem = require('../models/EventItem');
 const contactSubmissionService = require('../services/contactSubmissionService');
+const validate = require('../validators');
 const volunteerRegistrationService = require('../services/volunteerRegistrationService');
 const siteSettingsService = require('../services/siteSettingsService');
+const newsletterController = require('../controllers/newsletterController');
+const { subscribeNewsletterSchema } = require('../validators/newsletterValidator');
 const transparencyController = require('../controllers/transparencyController');
-const validate = require('../validators');
 const { createContactSubmissionSchema } = require('../validators/contactSubmissionValidator');
 const { createVolunteerRegistrationSchema } = require('../validators/volunteerRegistrationValidator');
 
@@ -315,6 +317,20 @@ router.post('/contact/submit', validate(createContactSubmissionSchema), async (r
     next(error);
   }
 });
+
+/**
+ * Newsletter subscribe (public)
+ */
+router.post(
+  '/newsletter/subscribe',
+  validate(subscribeNewsletterSchema),
+  newsletterController.subscribe
+);
+
+/**
+ * Newsletter unsubscribe (public)
+ */
+router.get('/newsletter/unsubscribe/:token', newsletterController.unsubscribe);
 
 /**
  * Submit volunteer registration (public)

@@ -130,6 +130,16 @@ export const publicApi = {
     return response.data;
   },
 
+  // Newsletter Subscribe (POST)
+  subscribeNewsletter: async (data: {
+    email: string;
+    name?: string;
+    language?: 'en' | 'gu' | 'hi';
+  }) => {
+    const response = await api.post('/public/newsletter/subscribe', data);
+    return response.data;
+  },
+
   // Donation - Create Razorpay Order
   createDonationOrder: async (data: {
     amount: number;

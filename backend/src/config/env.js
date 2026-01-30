@@ -15,7 +15,18 @@ module.exports = {
   razorpayKeyId: process.env.RAZORPAY_KEY_ID || '',
   razorpayKeySecret: process.env.RAZORPAY_KEY_SECRET || '',
   razorpayWebhookSecret: process.env.RAZORPAY_WEBHOOK_SECRET || '',
-  frontendBaseUrl: process.env.FRONTEND_BASE_URL || 'http://localhost:5173'
+  frontendBaseUrl: process.env.FRONTEND_BASE_URL || 'http://localhost:5173',
+
+  // Email / SMTP configuration (Gmail-friendly)
+  email: {
+    host: process.env.SMTP_HOST || 'smtp.gmail.com',
+    port: parseInt(process.env.SMTP_PORT, 10) || 587,
+    secure: process.env.SMTP_SECURE ? process.env.SMTP_SECURE === 'true' : false, // Gmail: 587 (STARTTLS) -> false, 465 -> true
+    user: process.env.SMTP_USER || '',
+    pass: process.env.SMTP_PASS || '',
+    fromAddress: process.env.SMTP_FROM || process.env.SMTP_USER || '',
+    fromName: process.env.SMTP_FROM_NAME || 'KSS',
+  }
 };
 
 

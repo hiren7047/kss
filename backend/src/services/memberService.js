@@ -1,9 +1,13 @@
 const Member = require('../models/Member');
 const { generateMemberId } = require('../utils/memberIdGenerator');
+const { generateRegistrationId } = require('../utils/volunteerCredentialsGenerator');
+const { generatePassword } = require('../utils/passwordGenerator');
 const { createAuditLog } = require('../utils/auditLogger');
 const { getPagination, createPaginationResponse } = require('../utils/pagination');
 const { generateRegistrationForm } = require('../utils/pdfGenerator');
 const { generateIdCard } = require('../utils/idCardGenerator');
+const VolunteerPoints = require('../models/VolunteerPoints');
+const { notifyMemberRegistered, notifyVolunteerRegistered } = require('../utils/notificationHelper');
 
 /**
  * Create a new member
@@ -22,11 +26,33 @@ const createMember = async (memberData, userId, ipAddress) => {
   while (attempts < maxAttempts) {
     try {
       const memberId = await generateMemberId(Member, memberData.memberType);
+      
+      // Generate registration ID and password for volunteers
+      let registrationId = null;
+      let password = null;
+      if (memberData.memberType === 'volunteer') {
+        registrationId = await generateRegistrationId(Member);
+        password = generatePassword();
+      }
+      
       member = await Member.create({
         ...memberData,
         memberId,
         name: fullName,
+        registrationId,
+        password
       });
+      
+      // Create VolunteerPoints entry for volunteers
+      if (memberData.memberType === 'volunteer') {
+        await VolunteerPoints.create({
+          volunteerId: member._id,
+          points: 0,
+          verifiedPoints: 0,
+          pendingPoints: 0
+        });
+      }
+      
       break;
     } catch (err) {
       if (isDuplicateKey(err) && attempts < maxAttempts - 1) {
@@ -78,6 +104,30 @@ const createMember = async (memberData, userId, ipAddress) => {
     ipAddress
   });
 
+  // Create notification for admins
+  try {
+    if (member.memberType === 'volunteer') {
+      await notifyVolunteerRegistered(member);
+    } else {
+      await notifyMemberRegistered(member);
+    }
+  } catch (error) {
+    console.error('Error creating member notification:', error);
+    // Don't fail member creation if notification fails
+  }
+
+  // For volunteers, include credentials in response (only on creation)
+  if (memberData.memberType === 'volunteer' && password) {
+    // Convert to plain object to add credentials
+    const memberObj = member.toObject();
+    memberObj.volunteerCredentials = {
+      registrationId: registrationId,
+      password: password // Include password only on creation
+    };
+    // Return as plain object (not mongoose document)
+    return memberObj;
+  }
+
   return member;
 };
 
@@ -98,13 +148,35 @@ const createMemberPublic = async (memberData, ipAddress) => {
   while (attempts < maxAttempts) {
     try {
       const memberId = await generateMemberId(Member, memberData.memberType);
+      
+      // Generate registration ID and password for volunteers (even if pending)
+      let registrationId = null;
+      let password = null;
+      if (memberData.memberType === 'volunteer') {
+        registrationId = await generateRegistrationId(Member);
+        password = generatePassword();
+      }
+      
       member = await Member.create({
         ...memberData,
         memberId,
         name: fullName,
         status: 'pending',
         approvalStatus: 'pending',
+        registrationId,
+        password
       });
+      
+      // Create VolunteerPoints entry for volunteers (even if pending approval)
+      if (memberData.memberType === 'volunteer') {
+        await VolunteerPoints.create({
+          volunteerId: member._id,
+          points: 0,
+          verifiedPoints: 0,
+          pendingPoints: 0
+        });
+      }
+      
       break;
     } catch (err) {
       if (isDuplicateKey(err) && attempts < maxAttempts - 1) {

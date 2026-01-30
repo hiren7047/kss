@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Heart, Users, Calendar, ArrowRight, BookOpen, Utensils, Droplets, HeartPulse, Coins, Loader2 } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import SectionTitle from '@/components/SectionTitle';
@@ -30,6 +32,10 @@ const durgaIcons: Record<string, React.ReactNode> = {
 const Index = () => {
   const { t, language } = useLanguage();
   const langClass = language === 'gu' ? 'lang-gu' : language === 'hi' ? 'lang-hi' : '';
+
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [newsletterName, setNewsletterName] = useState('');
+  const [newsletterStatus, setNewsletterStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
   // Fetch page content
   const { data: pageContent, isLoading: pageLoading, isError: pageError } = useQuery({
@@ -140,6 +146,22 @@ const Index = () => {
 
   const isLoading = pageLoading || durgaLoading || impactLoading || testimonialsLoading || eventsLoading;
   const hasError = pageError || durgaError || impactError || testimonialsError || eventsError;
+
+  const newsletterMutation = useMutation({
+    mutationFn: (payload: { email: string; name?: string }) =>
+      publicApi.subscribeNewsletter({
+        ...payload,
+        language: language as 'en' | 'gu' | 'hi',
+      }),
+    onSuccess: () => {
+      setNewsletterEmail('');
+      setNewsletterName('');
+      setNewsletterStatus('success');
+    },
+    onError: () => {
+      setNewsletterStatus('error');
+    },
+  });
 
   return (
     <div className="min-h-screen bg-background">
@@ -400,6 +422,65 @@ const Index = () => {
               ))}
             </div>
           )}
+        </div>
+      </section>
+
+      {/* Newsletter Section */}
+      <section className="py-20 bg-card">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto text-center space-y-6">
+            <SectionTitle
+              title={t('newsletter.title')}
+              subtitle={t('newsletter.subtitle')}
+            />
+            <div className="mt-4 bg-background rounded-2xl shadow-card border border-border px-4 py-6 md:px-8 md:py-8">
+              <div className="flex flex-col md:flex-row gap-3 md:gap-4 items-center justify-center">
+                <div className="w-full md:max-w-xs">
+                  <Input
+                    type="email"
+                    placeholder={t('newsletter.emailPlaceholder')}
+                    value={newsletterEmail}
+                    onChange={(e) => {
+                      setNewsletterEmail(e.target.value);
+                      setNewsletterStatus('idle');
+                    }}
+                  />
+                </div>
+                <div className="w-full md:max-w-xs">
+                  <Input
+                    type="text"
+                    placeholder={t('newsletter.namePlaceholder')}
+                    value={newsletterName}
+                    onChange={(e) => {
+                      setNewsletterName(e.target.value);
+                      setNewsletterStatus('idle');
+                    }}
+                  />
+                </div>
+                  <Button
+                  size="lg"
+                  className="w-full md:w-auto rounded-full"
+                  disabled={!newsletterEmail || newsletterMutation.isPending}
+                  onClick={() => {
+                    if (!newsletterEmail) return;
+                    newsletterMutation.mutate({
+                      email: newsletterEmail,
+                      name: newsletterName || undefined,
+                    });
+                  }}
+                >
+                  {newsletterMutation.isPending ? 'Subscribing…' : t('newsletter.button')}
+                </Button>
+              </div>
+              <div className="mt-3 text-xs text-muted-foreground text-center">
+                {newsletterStatus === 'success'
+                  ? t('newsletter.success')
+                  : newsletterStatus === 'error'
+                  ? t('newsletter.error')
+                  : t('newsletter.hint')}
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 

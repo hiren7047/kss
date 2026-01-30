@@ -362,6 +362,18 @@ export const translations = {
       sunday: 'રવિવાર',
     },
 
+    // Newsletter Section
+    newsletter: {
+      title: 'અમારી સેવા સાથે જોડાયેલા રહો',
+      subtitle: 'અન્નદાન, રક્તદાન શિબિર અને અન્ય સેવા પ્રવૃત્તિઓ વિશે સમયાંતરે અપડેટ મેળવો.',
+      emailPlaceholder: 'તમારું ઈમેલ',
+      namePlaceholder: 'તમારું નામ (વૈકલ્પિક)',
+      button: 'ન્યૂઝલેટર સબ્સ્ક્રાઇબ કરો',
+      success: 'સબ્સ્ક્રાઇબ કરવા બદલ આભાર! ભાવિ અપડેટ માટે કૃપા કરીને આપનું ઈમેલ તપાસતા રહો.',
+      error: 'અત્યારે઼ સબ્સ્ક્રાઇબ ન કરી શક્યા. થોડી વાર પછી ફરી પ્રયાસ કરો.',
+      hint: 'અમે તમારી પ્રાઈવસીનું સન્માન કરીએ છીએ. તમે ક્યારેય પણ ઈમેલમાંથી અનસબ્સ્ક્રાઇબ કરી શકો છો.',
+    },
+
     // Transparency Page
     transparency: {
       heroQuote: 'सत्यमेव जयते',
@@ -884,6 +896,18 @@ export const translations = {
       sunday: 'रविवार',
     },
 
+    // Newsletter Section
+    newsletter: {
+      title: 'सेवा से जुड़े रहें',
+      subtitle: 'अन्नदान, रक्तदान शिविर और हमारी अन्य सेवाओं के बारे में समय–समय पर अपडेट प्राप्त करें।',
+      emailPlaceholder: 'आपका ईमेल',
+      namePlaceholder: 'आपका नाम (वैकल्पिक)',
+      button: 'न्यूज़लेटर सब्सक्राइब करें',
+      success: 'सब्सक्राइब करने के लिए धन्यवाद! भविष्य के अपडेट के लिए अपना ईमेल देखें।',
+      error: 'अभी सब्सक्राइब नहीं कर पाए। कृपया बाद में पुनः प्रयास करें।',
+      hint: 'हम आपकी गोपनीयता का सम्मान करते हैं। आप कभी भी ईमेल से अनसब्सक्राइब कर सकते हैं।',
+    },
+
     // Transparency Page
     transparency: {
       heroQuote: 'सत्यमेव जयते',
@@ -1404,6 +1428,18 @@ export const translations = {
       officeHours: 'Office Hours',
       monSat: 'Monday - Saturday',
       sunday: 'Sunday',
+    },
+
+    // Newsletter Section
+    newsletter: {
+      title: 'Stay connected with our Seva',
+      subtitle: 'Receive occasional updates about Annadhan, blood donation camps and seva activities.',
+      emailPlaceholder: 'Your email',
+      namePlaceholder: 'Your name (optional)',
+      button: 'Subscribe to Newsletter',
+      success: 'Thank you for subscribing! Please check your email for future updates.',
+      error: 'Unable to subscribe right now. Please try again later.',
+      hint: 'We respect your privacy. You can unsubscribe anytime from email.',
     },
 
     // Transparency Page

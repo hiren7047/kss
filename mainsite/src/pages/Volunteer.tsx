@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
-import { Users, Heart, Clock, Award, Check, Loader2, CheckCircle2, ArrowLeft, ArrowRight, Upload } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
+import { Users, Heart, Clock, Award, Check, Loader2, CheckCircle2, ArrowLeft, ArrowRight, Upload, LogIn } from 'lucide-react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import axios from 'axios';
@@ -48,10 +48,141 @@ const Volunteer = () => {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [signature, setSignature] = useState<string>('');
+  const formSectionRef = useRef<HTMLElement>(null);
+  const signatureCanvasRef = useRef<HTMLCanvasElement>(null);
+  const isDrawingRef = useRef(false);
+
+  // Initialize signature canvas
+  useEffect(() => {
+    if (signatureCanvasRef.current && currentStep === 5) {
+      const canvas = signatureCanvasRef.current;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        // Wait for canvas to be rendered
+        const initCanvas = () => {
+          const rect = canvas.getBoundingClientRect();
+          if (rect.width > 0) {
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = rect.width * dpr;
+            canvas.height = 200 * dpr;
+            ctx.scale(dpr, dpr);
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            // Clear any previous drawing
+            ctx.clearRect(0, 0, rect.width, 200);
+          }
+        };
+        
+        // Initialize immediately
+        initCanvas();
+        
+        // Also initialize after a short delay to ensure DOM is ready
+        const timeout = setTimeout(initCanvas, 100);
+        
+        return () => clearTimeout(timeout);
+      }
+    }
+  }, [currentStep]);
+
+  // Setup signature drawing handlers
+  useEffect(() => {
+    if (!signatureCanvasRef.current || currentStep !== 5) return;
+
+    const canvas = signatureCanvasRef.current;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const startDrawing = (x: number, y: number) => {
+      isDrawingRef.current = true;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+    };
+
+    const draw = (x: number, y: number) => {
+      if (!isDrawingRef.current) return;
+      ctx.lineTo(x, y);
+      ctx.stroke();
+      const dataUrl = canvas.toDataURL();
+      setSignature(dataUrl);
+      setFormData(prev => ({ ...prev, signature: dataUrl }));
+    };
+
+    const stopDrawing = () => {
+      if (isDrawingRef.current) {
+        isDrawingRef.current = false;
+        const dataUrl = canvas.toDataURL();
+        setSignature(dataUrl);
+        setFormData(prev => ({ ...prev, signature: dataUrl }));
+      }
+    };
+
+    const handleMouseDown = (e: MouseEvent) => {
+      e.preventDefault();
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      startDrawing(x, y);
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      draw(x, y);
+    };
+
+    const handleMouseUp = () => {
+      stopDrawing();
+    };
+
+    const handleTouchStart = (e: TouchEvent) => {
+      e.preventDefault();
+      const touch = e.touches[0];
+      const rect = canvas.getBoundingClientRect();
+      const x = touch.clientX - rect.left;
+      const y = touch.clientY - rect.top;
+      startDrawing(x, y);
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      e.preventDefault();
+      const touch = e.touches[0];
+      const rect = canvas.getBoundingClientRect();
+      const x = touch.clientX - rect.left;
+      const y = touch.clientY - rect.top;
+      draw(x, y);
+    };
+
+    const handleTouchEnd = () => {
+      stopDrawing();
+    };
+
+    canvas.addEventListener('mousedown', handleMouseDown);
+    canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('mouseup', handleMouseUp);
+    canvas.addEventListener('mouseleave', handleMouseUp);
+    canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+    canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+    canvas.addEventListener('touchend', handleTouchEnd);
+
+    return () => {
+      canvas.removeEventListener('mousedown', handleMouseDown);
+      canvas.removeEventListener('mousemove', handleMouseMove);
+      canvas.removeEventListener('mouseup', handleMouseUp);
+      canvas.removeEventListener('mouseleave', handleMouseUp);
+      canvas.removeEventListener('touchstart', handleTouchStart);
+      canvas.removeEventListener('touchmove', handleTouchMove);
+      canvas.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [currentStep]);
   const [registrationSuccess, setRegistrationSuccess] = useState<{
     memberId: string;
     name: string;
     memberType: string;
+    registrationId?: string;
+    password?: string;
   } | null>(null);
 
   const [formData, setFormData] = useState({
@@ -153,12 +284,25 @@ const Volunteer = () => {
       return response.data;
     },
     onSuccess: (data) => {
-      setRegistrationSuccess({
-        memberId: data.data.memberId,
-        name: data.data.name,
-        memberType: data.data.memberType,
-      });
-      toast.success('Registration submitted successfully!');
+      // If volunteer was registered, show credentials
+      if (data.data.memberType === 'volunteer' && data.data.volunteerCredentials) {
+        const creds = data.data.volunteerCredentials;
+        setRegistrationSuccess({
+          memberId: data.data.memberId,
+          name: data.data.name,
+          memberType: data.data.memberType,
+          registrationId: creds.registrationId,
+          password: creds.password,
+        });
+        toast.success('Volunteer registered successfully! Please note your credentials.');
+      } else {
+        setRegistrationSuccess({
+          memberId: data.data.memberId,
+          name: data.data.name,
+          memberType: data.data.memberType,
+        });
+        toast.success('Registration submitted successfully!');
+      }
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.message || 'Failed to submit registration');
@@ -184,14 +328,20 @@ const Volunteer = () => {
   const nextStep = () => {
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Scroll to form section start instead of page top
+      setTimeout(() => {
+        formSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
     }
   };
 
   const prevStep = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Scroll to form section start instead of page top
+      setTimeout(() => {
+        formSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
     }
   };
 
@@ -214,33 +364,77 @@ const Volunteer = () => {
                 <p className={`text-muted-foreground mb-6 ${langClass}`}>
                   {t('register.successMessage')}
                 </p>
-                <div className="bg-muted p-4 rounded-lg mb-6 text-left">
-                  <p className="text-sm text-muted-foreground mb-1">Member ID</p>
-                  <p className="font-mono font-bold text-lg">{registrationSuccess.memberId}</p>
-                  <p className="text-sm text-muted-foreground mt-4 mb-1">Name</p>
-                  <p className="font-semibold">{registrationSuccess.name}</p>
-                  <p className="text-sm text-muted-foreground mt-4 mb-1">Member Type</p>
-                  <p className="font-semibold capitalize">{registrationSuccess.memberType}</p>
+                <div className="bg-muted p-4 rounded-lg mb-6 text-left space-y-4">
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">Member ID</p>
+                    <p className="font-mono font-bold text-lg">{registrationSuccess.memberId}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">Name</p>
+                    <p className="font-semibold">{registrationSuccess.name}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">Member Type</p>
+                    <p className="font-semibold capitalize">{registrationSuccess.memberType}</p>
+                  </div>
+                  
+                  {/* Show credentials if volunteer */}
+                  {registrationSuccess.memberType === 'volunteer' && registrationSuccess.registrationId && (
+                    <div className="mt-6 p-4 bg-primary/10 border-2 border-primary rounded-lg">
+                      <p className="text-sm font-semibold mb-3 text-primary">
+                        ⚠️ Important: Please save these credentials!
+                      </p>
+                      <div className="space-y-3">
+                        <div>
+                          <p className="text-xs text-muted-foreground mb-1">Registration ID</p>
+                          <p className="font-mono font-bold text-lg text-primary bg-white px-3 py-2 rounded border">
+                            {registrationSuccess.registrationId}
+                          </p>
+                        </div>
+                        {registrationSuccess.password && (
+                          <div>
+                            <p className="text-xs text-muted-foreground mb-1">Password</p>
+                            <p className="font-mono font-bold text-lg text-primary bg-white px-3 py-2 rounded border">
+                              {registrationSuccess.password}
+                            </p>
+                          </div>
+                        )}
+                        <p className="text-xs text-muted-foreground mt-3">
+                          You can use these credentials to login at{' '}
+                          <Link to="/volunteer/login" className="text-primary underline font-medium">
+                            Volunteer Login
+                          </Link>
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 <div className="flex gap-4 justify-center">
                   <Button variant="outline" onClick={() => navigate('/')}>
                     {t('common.home')}
                   </Button>
-                  <Button onClick={() => {
-                    setRegistrationSuccess(null);
-                    setCurrentStep(1);
-                    setFormData({
-                      firstName: '', middleName: '', lastName: '', dateOfBirth: '', age: '', gender: '',
-                      parentsName: '', fatherBusiness: '', motherBusiness: '', email: '', mobile: '',
-                      whatsappNumber: '', emergencyContact: { name: '', number: '', relation: '' },
-                      address: { street: '', city: '', state: '', country: 'India', pincode: '' },
-                      aadharNumber: '', idProofType: 'Aadhaar', photo: '', occupation: '', business: '',
-                      educationDetails: '', familyMembersCount: '', interests: [], availability: '',
-                      memberType: 'volunteer', notes: '', signature: '',
-                    });
-                  }}>
-                    {t('register.registerAnother')}
-                  </Button>
+                  {registrationSuccess.memberType === 'volunteer' && registrationSuccess.registrationId ? (
+                    <Button onClick={() => navigate('/volunteer/login')}>
+                      <LogIn className="w-4 h-4 mr-2" />
+                      Go to Login
+                    </Button>
+                  ) : (
+                    <Button onClick={() => {
+                      setRegistrationSuccess(null);
+                      setCurrentStep(1);
+                      setFormData({
+                        firstName: '', middleName: '', lastName: '', dateOfBirth: '', age: '', gender: '',
+                        parentsName: '', fatherBusiness: '', motherBusiness: '', email: '', mobile: '',
+                        whatsappNumber: '', emergencyContact: { name: '', number: '', relation: '' },
+                        address: { street: '', city: '', state: '', country: 'India', pincode: '' },
+                        aadharNumber: '', idProofType: 'Aadhaar', photo: '', occupation: '', business: '',
+                        educationDetails: '', familyMembersCount: '', interests: [], availability: '',
+                        memberType: 'volunteer', notes: '', signature: '',
+                      });
+                    }}>
+                      {t('register.registerAnother')}
+                    </Button>
+                  )}
                 </div>
               </Card>
             </motion.div>
@@ -333,8 +527,16 @@ const Volunteer = () => {
       </section>
 
       {/* Registration Form */}
-      <section className="py-20 bg-card">
+      <section ref={formSectionRef} className="py-20 bg-card">
         <div className="container mx-auto px-4">
+          <div className="text-center mb-6">
+            <p className="text-muted-foreground mb-4">
+              Already registered?{' '}
+              <Link to="/volunteer/login" className="text-primary hover:underline font-medium">
+                Login here
+              </Link>
+            </p>
+          </div>
           <SectionTitle
             title={t('volunteer.formTitle')}
             subtitle={t('volunteer.formSubtitle')}
@@ -391,13 +593,14 @@ const Volunteer = () => {
                       />
                     </div>
                     <div>
-                      <Label className={langClass}>{t('form.mobile')} *</Label>
+                      <Label className={langClass}>{t('form.phoneNumber')} *</Label>
                       <Input
                         type="tel"
                         value={formData.mobile}
                         onChange={(e) => setFormData({ ...formData, mobile: e.target.value.replace(/\D/g, '').slice(0, 10) })}
                         required
                         maxLength={10}
+                        placeholder={t('form.phoneNumber')}
                       />
                     </div>
                     <div>
@@ -729,91 +932,9 @@ const Volunteer = () => {
                     <Label className={langClass}>{t('form.signature')} *</Label>
                     <div className="border-2 border-dashed rounded-lg p-4 bg-muted/50">
                       <canvas
-                        ref={(canvas) => {
-                          if (canvas) {
-                            const ctx = canvas.getContext('2d');
-                            if (ctx) {
-                              const rect = canvas.getBoundingClientRect();
-                              canvas.width = rect.width;
-                              canvas.height = 200;
-                              ctx.strokeStyle = '#000';
-                              ctx.lineWidth = 2;
-                              ctx.lineCap = 'round';
-                              ctx.lineJoin = 'round';
-                            }
-                          }
-                        }}
+                        ref={signatureCanvasRef}
                         className="w-full border rounded bg-white cursor-crosshair"
                         style={{ height: '200px', touchAction: 'none' }}
-                        onMouseDown={(e) => {
-                          const canvas = e.currentTarget;
-                          const ctx = canvas.getContext('2d');
-                          if (!ctx) return;
-
-                          const rect = canvas.getBoundingClientRect();
-                          const x = e.clientX - rect.left;
-                          const y = e.clientY - rect.top;
-
-                          ctx.beginPath();
-                          ctx.moveTo(x, y);
-
-                          const draw = (e: MouseEvent) => {
-                            const x2 = e.clientX - rect.left;
-                            const y2 = e.clientY - rect.top;
-                            ctx.lineTo(x2, y2);
-                            ctx.stroke();
-                            const dataUrl = canvas.toDataURL();
-                            setSignature(dataUrl);
-                            setFormData({ ...formData, signature: dataUrl });
-                          };
-
-                          const stop = () => {
-                            canvas.removeEventListener('mousemove', draw);
-                            canvas.removeEventListener('mouseup', stop);
-                            const dataUrl = canvas.toDataURL();
-                            setSignature(dataUrl);
-                            setFormData({ ...formData, signature: dataUrl });
-                          };
-
-                          canvas.addEventListener('mousemove', draw);
-                          canvas.addEventListener('mouseup', stop);
-                        }}
-                        onTouchStart={(e) => {
-                          const canvas = e.currentTarget;
-                          const ctx = canvas.getContext('2d');
-                          if (!ctx) return;
-
-                          const touch = e.touches[0];
-                          const rect = canvas.getBoundingClientRect();
-                          const x = touch.clientX - rect.left;
-                          const y = touch.clientY - rect.top;
-
-                          ctx.beginPath();
-                          ctx.moveTo(x, y);
-
-                          const draw = (e: TouchEvent) => {
-                            e.preventDefault();
-                            const touch = e.touches[0];
-                            const x2 = touch.clientX - rect.left;
-                            const y2 = touch.clientY - rect.top;
-                            ctx.lineTo(x2, y2);
-                            ctx.stroke();
-                            const dataUrl = canvas.toDataURL();
-                            setSignature(dataUrl);
-                            setFormData({ ...formData, signature: dataUrl });
-                          };
-
-                          const stop = () => {
-                            canvas.removeEventListener('touchmove', draw);
-                            canvas.removeEventListener('touchend', stop);
-                            const dataUrl = canvas.toDataURL();
-                            setSignature(dataUrl);
-                            setFormData({ ...formData, signature: dataUrl });
-                          };
-
-                          canvas.addEventListener('touchmove', draw, { passive: false });
-                          canvas.addEventListener('touchend', stop);
-                        }}
                       />
                     </div>
                     <Button
@@ -822,11 +943,10 @@ const Volunteer = () => {
                       size="sm"
                       className="mt-2"
                       onClick={() => {
-                        const canvas = document.querySelector('canvas') as HTMLCanvasElement;
-                        if (canvas) {
-                          const ctx = canvas.getContext('2d');
+                        if (signatureCanvasRef.current) {
+                          const ctx = signatureCanvasRef.current.getContext('2d');
                           if (ctx) {
-                            ctx.clearRect(0, 0, canvas.width, canvas.height);
+                            ctx.clearRect(0, 0, signatureCanvasRef.current.width, signatureCanvasRef.current.height);
                             setSignature('');
                             setFormData({ ...formData, signature: '' });
                           }

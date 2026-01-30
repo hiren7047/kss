@@ -1,9 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const eventController = require('../controllers/eventController');
+const eventCompletionController = require('../controllers/eventCompletionController');
 const { authenticate, authorize } = require('../middlewares/auth');
 const validate = require('../validators');
 const { createEventSchema, updateEventSchema } = require('../validators/eventValidator');
+const { completeEventSchema } = require('../validators/eventCompletionValidator');
 
 // POST /events
 router.post(
@@ -77,6 +79,23 @@ router.get(
   authenticate,
   authorize('EVENT_READ'),
   eventController.getEventItemsWithDonations
+);
+
+// GET /events/:id/completion-summary - Get event completion summary with volunteers
+router.get(
+  '/:id/completion-summary',
+  authenticate,
+  authorize('EVENT_READ'),
+  eventCompletionController.getEventCompletionSummary
+);
+
+// POST /events/:id/complete - Complete event and assign points
+router.post(
+  '/:id/complete',
+  authenticate,
+  authorize('EVENT_UPDATE'),
+  validate(completeEventSchema),
+  eventCompletionController.completeEventWithPoints
 );
 
 module.exports = router;

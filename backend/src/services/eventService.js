@@ -4,6 +4,7 @@ const Expense = require('../models/Expense');
 const VolunteerAssignment = require('../models/VolunteerAssignment');
 const { createAuditLog } = require('../utils/auditLogger');
 const { getPagination, createPaginationResponse } = require('../utils/pagination');
+const { notifyEventCreated } = require('../utils/notificationHelper');
 
 /**
  * Create a new event
@@ -19,6 +20,14 @@ const createEvent = async (eventData, userId, ipAddress) => {
     newData: event.toObject(),
     ipAddress
   });
+
+  // Create notification for admins
+  try {
+    await notifyEventCreated(event);
+  } catch (error) {
+    console.error('Error creating event notification:', error);
+    // Don't fail event creation if notification fails
+  }
 
   return event;
 };
