@@ -210,7 +210,7 @@ npm run build
 ```
 
 > **If build fails with "Could not resolve entry module 'index.html'":**  
-> The `index.html` file must be in the frontend directory. Verify with `ls -la index.html`. If it's missing, ensure you cloned/pulled the full repo (e.g. `git pull` from `/var/www/kss/kss`) or copy `frontend/index.html` from your source.
+> The `index.html` file must be in the frontend directory. Verify with `ls -la index.html`. If it's missing, see **[Empty frontend folder after clone](#empty-frontend-folder-after-clone)** below below.
 
 **Mainsite:**
 ```bash
@@ -463,6 +463,40 @@ sudo systemctl status mongod     # Check status
 sudo systemctl restart mongod    # Restart MongoDB
 mongosh                          # Connect to MongoDB shell
 ```
+
+---
+
+## ❗ Troubleshooting
+
+### Empty frontend folder after clone
+
+If `frontend` only contains `node_modules`, `package.json`, and `package-lock.json` (no `index.html`, no `src/`), the repo is treating `frontend` as a **Git submodule** (gitlink). Clone doesn’t check out those files.
+
+**One-time fix (do this on your local machine where you have the full repo):**
+
+1. Open a terminal in the repo root (e.g. `e:\KSS` or `/path/to/kss`).
+2. Remove the submodule reference and add frontend as normal files:
+
+```bash
+git rm --cached frontend
+git add frontend/
+git status
+git commit -m "fix: track frontend as normal files instead of submodule"
+git push origin main
+```
+
+3. On the server, pull and build:
+
+```bash
+cd /var/www/kss/kss
+git pull origin main
+cd frontend
+ls -la index.html
+npm install
+npm run build
+```
+
+After this, `frontend` is normal tracked files and future clones/pulls will get the full admin panel.
 
 ---
 
