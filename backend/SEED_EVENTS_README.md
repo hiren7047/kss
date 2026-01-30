@@ -114,7 +114,7 @@ After running the seed script, you can test:
 
 ## Notes
 
-- The script uses the existing admin user (admin@kss.org) as manager
+- The script uses the existing admin user (admin@krushnasadasahayte.org) as manager
 - If admin doesn't exist, it creates a test manager
 - All donations are marked as 'completed'
 - Item donations automatically update item statistics

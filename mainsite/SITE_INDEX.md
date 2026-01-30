@@ -416,7 +416,7 @@
 2. **Contact Info Cards**
    - **Phone:** +91 98765 43210
    - **WhatsApp:** +91 98765 43210
-   - **Email:** info@kss.org
+   - **Email:** info@krushnasadasahayte.org
    - **Address:** Gujarat, India
 
 3. **Contact Form & Map**
@@ -700,7 +700,7 @@ const langClass = language === 'gu' ? 'lang-gu' : language === 'hi' ? 'lang-hi' 
 ### Contact Information
 - **Phone:** +91 98765 43210
 - **WhatsApp:** +91 98765 43210
-- **Email:** info@kss.org
+- **Email:** info@krushnasadasahayte.org
 - **Location:** Gujarat, India
 - **Office Hours:**
   - Mon-Sat: 9:00 AM - 6:00 PM

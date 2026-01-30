@@ -6,9 +6,9 @@ Use this as a quick reference during deployment.
 
 - [ ] VPS with Ubuntu 24.04 ready
 - [ ] Domain DNS records configured:
-  - [ ] A record for `kss.org` → VPS IP
-  - [ ] A record for `admin.kss.org` → VPS IP
-  - [ ] A record for `api.kss.org` → VPS IP (optional)
+  - [ ] A record for `krushnasadasahayte.org` → VPS IP
+  - [ ] A record for `admin.krushnasadasahayte.org` → VPS IP
+  - [ ] A record for `api.krushnasadasahayte.org` → VPS IP (optional)
 - [ ] SSH access to VPS
 - [ ] Code uploaded/cloned to VPS
 
@@ -77,15 +77,15 @@ nano .env.production  # Edit API URL
 ### 7. Nginx Configuration
 ```bash
 # Copy configs from repo (do NOT create with nano)
-sudo cp /var/www/kss/kss/nginx-configs/kss.org.conf /etc/nginx/sites-available/kss.org
-sudo cp /var/www/kss/kss/nginx-configs/admin.kss.org.conf /etc/nginx/sites-available/admin.kss.org
-# Optional: sudo cp .../api.kss.org.conf /etc/nginx/sites-available/api.kss.org
+sudo cp /var/www/kss/kss/nginx-configs/krushnasadasahayte.org.conf /etc/nginx/sites-available/krushnasadasahayte.org
+sudo cp /var/www/kss/kss/nginx-configs/admin.krushnasadasahayte.org.conf /etc/nginx/sites-available/admin.krushnasadasahayte.org
+# Optional: sudo cp .../api.krushnasadasahayte.org.conf /etc/nginx/sites-available/api.krushnasadasahayte.org
 
 # Remove default & broken symlinks, then enable
 sudo rm -f /etc/nginx/sites-enabled/default
-sudo rm -f /etc/nginx/sites-enabled/kss.org /etc/nginx/sites-enabled/admin.kss.org
-sudo ln -s /etc/nginx/sites-available/kss.org /etc/nginx/sites-enabled/
-sudo ln -s /etc/nginx/sites-available/admin.kss.org /etc/nginx/sites-enabled/
+sudo rm -f /etc/nginx/sites-enabled/krushnasadasahayte.org /etc/nginx/sites-enabled/admin.krushnasadasahayte.org
+sudo ln -s /etc/nginx/sites-available/krushnasadasahayte.org /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/admin.krushnasadasahayte.org /etc/nginx/sites-enabled/
 
 # Test and reload
 sudo nginx -t && sudo systemctl reload nginx
@@ -94,9 +94,9 @@ sudo nginx -t && sudo systemctl reload nginx
 ### 8. SSL Certificates
 ```bash
 sudo apt install -y certbot python3-certbot-nginx
-sudo certbot --nginx -d kss.org -d www.kss.org
-sudo certbot --nginx -d admin.kss.org
-# Optional: sudo certbot --nginx -d api.kss.org
+sudo certbot --nginx -d krushnasadasahayte.org -d www.krushnasadasahayte.org
+sudo certbot --nginx -d admin.krushnasadasahayte.org
+# Optional: sudo certbot --nginx -d api.krushnasadasahayte.org
 ```
 
 ### 9. Start Backend
@@ -115,9 +115,9 @@ npm run seed:admin
 
 ## Verification
 
-- [ ] https://kss.org loads main site
-- [ ] https://admin.kss.org loads admin panel
-- [ ] https://api.kss.org/api/health returns success (if configured)
+- [ ] https://krushnasadasahayte.org loads main site
+- [ ] https://admin.krushnasadasahayte.org loads admin panel
+- [ ] https://api.krushnasadasahayte.org/api/health returns success (if configured)
 - [ ] Can login to admin panel
 - [ ] Backend logs show no errors: `pm2 logs kss-backend`
 

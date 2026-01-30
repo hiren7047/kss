@@ -94,26 +94,26 @@ Don’t use `nano` to create configs. Use the ones in the repo.
 **3.1 Copy configs**
 
 ```bash
-sudo cp /var/www/kss/kss/nginx-configs/kss.org.conf /etc/nginx/sites-available/kss.org
-sudo cp /var/www/kss/kss/nginx-configs/admin.kss.org.conf /etc/nginx/sites-available/admin.kss.org
-sudo cp /var/www/kss/kss/nginx-configs/api.kss.org.conf /etc/nginx/sites-available/api.kss.org
+sudo cp /var/www/kss/kss/nginx-configs/krushnasadasahayte.org.conf /etc/nginx/sites-available/krushnasadasahayte.org
+sudo cp /var/www/kss/kss/nginx-configs/admin.krushnasadasahayte.org.conf /etc/nginx/sites-available/admin.krushnasadasahayte.org
+sudo cp /var/www/kss/kss/nginx-configs/api.krushnasadasahayte.org.conf /etc/nginx/sites-available/api.krushnasadasahayte.org
 ```
 
 **3.2 Remove default site and old symlinks**
 
 ```bash
 sudo rm -f /etc/nginx/sites-enabled/default
-sudo rm -f /etc/nginx/sites-enabled/kss.org
-sudo rm -f /etc/nginx/sites-enabled/admin.kss.org
-sudo rm -f /etc/nginx/sites-enabled/api.kss.org
+sudo rm -f /etc/nginx/sites-enabled/krushnasadasahayte.org
+sudo rm -f /etc/nginx/sites-enabled/admin.krushnasadasahayte.org
+sudo rm -f /etc/nginx/sites-enabled/api.krushnasadasahayte.org
 ```
 
 **3.3 Re-create symlinks**
 
 ```bash
-sudo ln -s /etc/nginx/sites-available/kss.org /etc/nginx/sites-enabled/
-sudo ln -s /etc/nginx/sites-available/admin.kss.org /etc/nginx/sites-enabled/
-sudo ln -s /etc/nginx/sites-available/api.kss.org /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/krushnasadasahayte.org /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/admin.krushnasadasahayte.org /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/api.krushnasadasahayte.org /etc/nginx/sites-enabled/
 ```
 
 **3.4 Test and reload**
@@ -147,7 +147,7 @@ Set at least:
 - `PORT=3000`
 - `MONGODB_URI=mongodb://localhost:27017/kss_ngo`
 - `JWT_SECRET=<generate with: openssl rand -base64 32>`
-- `CORS_ORIGIN=https://admin.kss.org`
+- `CORS_ORIGIN=https://admin.krushnasadasahayte.org`
 
 **4.2 Frontend**
 
@@ -165,8 +165,8 @@ nano .env.production
 
 Set `VITE_API_URL` to your API URL, e.g.:
 
-- `https://api.kss.org/api` if using api.kss.org, or  
-- `https://kss.org/api` if you proxy API under kss.org.
+- `https://api.krushnasadasahayte.org/api` if using api.krushnasadasahayte.org, or  
+- `https://krushnasadasahayte.org/api` if you proxy API under krushnasadasahayte.org.
 
 Then build:
 
@@ -212,9 +212,9 @@ pm2 logs kss-backend
 ## 6. SSL (after HTTP works)
 
 ```bash
-sudo certbot --nginx -d kss.org -d www.kss.org
-sudo certbot --nginx -d admin.kss.org
-sudo certbot --nginx -d api.kss.org
+sudo certbot --nginx -d krushnasadasahayte.org -d www.krushnasadasahayte.org
+sudo certbot --nginx -d admin.krushnasadasahayte.org
+sudo certbot --nginx -d api.krushnasadasahayte.org
 ```
 
 ---
@@ -240,4 +240,4 @@ npm run seed:admin
 - [ ] Certbot run for SSL
 - [ ] `npm run seed:admin` executed
 
-After this, `https://kss.org`, `https://admin.kss.org`, and `https://api.kss.org` should work.
+After this, `https://krushnasadasahayte.org`, `https://admin.krushnasadasahayte.org`, and `https://api.krushnasadasahayte.org` should work.

@@ -19,12 +19,12 @@ const seedEventsData = async () => {
     console.log('Connected to MongoDB');
 
     // Get or create a manager user
-    let manager = await User.findOne({ email: 'admin@kss.org' });
+    let manager = await User.findOne({ email: 'admin@krushnasadasahayte.org' });
     if (!manager) {
       // Create a test manager if admin doesn't exist
       manager = await User.create({
         name: 'Event Manager',
-        email: 'manager@kss.org',
+        email: 'manager@krushnasadasahayte.org',
         mobile: '9876543210',
         password: 'Manager@123',
         role: 'ADMIN',

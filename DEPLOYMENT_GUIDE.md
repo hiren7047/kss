@@ -6,14 +6,14 @@ Complete deployment guide for KSS (Krishna Sada Sahayate) NGO Management System 
 
 This guide covers deployment of:
 1. **Backend API** - Node.js/Express API server
-2. **Admin Panel** - React admin interface (admin.kss.org)
-3. **Main Site** - React public website (kss.org)
+2. **Admin Panel** - React admin interface (admin.krushnasadasahayte.org)
+3. **Main Site** - React public website (krushnasadasahayte.org)
 
 ## 🌐 Domain Setup
 
-- **kss.org** → Main public website
-- **admin.kss.org** → Admin panel
-- **api.kss.org** → Backend API (optional, or use direct IP:port)
+- **krushnasadasahayte.org** → Main public website
+- **admin.krushnasadasahayte.org** → Admin panel
+- **api.krushnasadasahayte.org** → Backend API (optional, or use direct IP:port)
 
 ---
 
@@ -147,18 +147,18 @@ sudo systemctl enable nginx
 
 ```bash
 # Clone first (see Step 5), then copy configs from repo:
-sudo cp /var/www/kss/kss/nginx-configs/kss.org.conf /etc/nginx/sites-available/kss.org
-sudo cp /var/www/kss/kss/nginx-configs/admin.kss.org.conf /etc/nginx/sites-available/admin.kss.org
-sudo cp /var/www/kss/kss/nginx-configs/api.kss.org.conf /etc/nginx/sites-available/api.kss.org
+sudo cp /var/www/kss/kss/nginx-configs/krushnasadasahayte.org.conf /etc/nginx/sites-available/krushnasadasahayte.org
+sudo cp /var/www/kss/kss/nginx-configs/admin.krushnasadasahayte.org.conf /etc/nginx/sites-available/admin.krushnasadasahayte.org
+sudo cp /var/www/kss/kss/nginx-configs/api.krushnasadasahayte.org.conf /etc/nginx/sites-available/api.krushnasadasahayte.org
 
 # Remove default site and any broken symlinks
 sudo rm -f /etc/nginx/sites-enabled/default
-sudo rm -f /etc/nginx/sites-enabled/kss.org /etc/nginx/sites-enabled/admin.kss.org /etc/nginx/sites-enabled/api.kss.org
+sudo rm -f /etc/nginx/sites-enabled/krushnasadasahayte.org /etc/nginx/sites-enabled/admin.krushnasadasahayte.org /etc/nginx/sites-enabled/api.krushnasadasahayte.org
 
 # Enable KSS sites
-sudo ln -s /etc/nginx/sites-available/kss.org /etc/nginx/sites-enabled/
-sudo ln -s /etc/nginx/sites-available/admin.kss.org /etc/nginx/sites-enabled/
-# Optional: sudo ln -s /etc/nginx/sites-available/api.kss.org /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/krushnasadasahayte.org /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/admin.krushnasadasahayte.org /etc/nginx/sites-enabled/
+# Optional: sudo ln -s /etc/nginx/sites-available/api.krushnasadasahayte.org /etc/nginx/sites-enabled/
 ```
 
 Test and reload Nginx:
@@ -241,8 +241,8 @@ JWT_EXPIRES_IN=7d
 JWT_REFRESH_EXPIRES_IN=30d
 
 # CORS
-CORS_ORIGIN=https://admin.kss.org
-FRONTEND_BASE_URL=https://admin.kss.org
+CORS_ORIGIN=https://admin.krushnasadasahayte.org
+FRONTEND_BASE_URL=https://admin.krushnasadasahayte.org
 
 # File Uploads
 UPLOAD_DIR=./uploads
@@ -266,9 +266,9 @@ nano .env.production
 ```
 
 ```env
-VITE_API_URL=https://api.kss.org/api
+VITE_API_URL=https://api.krushnasadasahayte.org/api
 # OR if not using api subdomain:
-# VITE_API_URL=https://kss.org/api
+# VITE_API_URL=https://krushnasadasahayte.org/api
 ```
 
 ### 6.3 Mainsite Environment (.env.production)
@@ -279,9 +279,9 @@ nano .env.production
 ```
 
 ```env
-VITE_API_URL=https://api.kss.org/api
+VITE_API_URL=https://api.krushnasadasahayte.org/api
 # OR if not using api subdomain:
-# VITE_API_URL=https://kss.org/api
+# VITE_API_URL=https://krushnasadasahayte.org/api
 ```
 
 ---
@@ -296,13 +296,13 @@ sudo apt install -y certbot python3-certbot-nginx
 ### 7.2 Obtain SSL Certificates
 ```bash
 # For main site
-sudo certbot --nginx -d kss.org -d www.kss.org
+sudo certbot --nginx -d krushnasadasahayte.org -d www.krushnasadasahayte.org
 
 # For admin panel
-sudo certbot --nginx -d admin.kss.org
+sudo certbot --nginx -d admin.krushnasadasahayte.org
 
 # For API (if using subdomain)
-sudo certbot --nginx -d api.kss.org
+sudo certbot --nginx -d api.krushnasadasahayte.org
 ```
 
 Certbot will automatically configure Nginx with SSL.
@@ -336,9 +336,9 @@ pm2 logs kss-backend
 ## 📝 Step 9: Nginx Configuration Files
 
 See `nginx-configs/` directory for complete Nginx configurations:
-- `kss.org.conf` - Main site configuration
-- `admin.kss.org.conf` - Admin panel configuration
-- `api.kss.org.conf` - API reverse proxy (optional)
+- `krushnasadasahayte.org.conf` - Main site configuration
+- `admin.krushnasadasahayte.org.conf` - Admin panel configuration
+- `api.krushnasadasahayte.org.conf` - API reverse proxy (optional)
 
 ---
 
@@ -357,9 +357,9 @@ sudo systemctl status mongod
 ```
 
 ### 10.2 Test URLs
-- https://kss.org - Main site
-- https://admin.kss.org - Admin panel
-- https://api.kss.org/api/health - API health check
+- https://krushnasadasahayte.org - Main site
+- https://admin.krushnasadasahayte.org - Admin panel
+- https://api.krushnasadasahayte.org/api/health - API health check
 
 ### 10.3 Check Logs
 ```bash

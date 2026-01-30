@@ -29,19 +29,19 @@ This document lists all deployment-related files and their purposes.
 ### Nginx Configurations
 Location: `nginx-configs/`
 
-- **kss.org.conf** - Nginx config for main site (kss.org)
+- **krushnasadasahayte.org.conf** - Nginx config for main site (krushnasadasahayte.org)
   - Serves React mainsite build
   - SSL configuration
   - Static file serving
   - Optional API proxy
 
-- **admin.kss.org.conf** - Nginx config for admin panel
+- **admin.krushnasadasahayte.org.conf** - Nginx config for admin panel
   - Serves React admin panel build
   - SSL configuration
   - Static file serving
   - Optional API proxy
 
-- **api.kss.org.conf** - Nginx config for API (optional)
+- **api.krushnasadasahayte.org.conf** - Nginx config for API (optional)
   - Reverse proxy to backend
   - SSL configuration
   - Health check endpoint
@@ -116,9 +116,9 @@ After deployment, your VPS structure should be:
 │   ├── .env.production         # Created from env-examples/mainsite.env.example
 │   └── package.json
 └── nginx-configs/              # Copy these to /etc/nginx/sites-available/
-    ├── kss.org.conf
-    ├── admin.kss.org.conf
-    └── api.kss.org.conf
+    ├── krushnasadasahayte.org.conf
+    ├── admin.krushnasadasahayte.org.conf
+    └── api.krushnasadasahayte.org.conf
 ```
 
 ## 🔄 Deployment Workflow

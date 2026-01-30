@@ -4,14 +4,14 @@
 
 તમારી પાસે 3 applications છે:
 1. **Backend API** - Node.js/Express server (port 3000 પર ચાલશે)
-2. **Admin Panel** - React admin interface (admin.kss.org પર)
-3. **Main Site** - React public website (kss.org પર)
+2. **Admin Panel** - React admin interface (admin.krushnasadasahayte.org પર)
+3. **Main Site** - React public website (krushnasadasahayte.org પર)
 
 ## 🌐 Domain Setup
 
-- **kss.org** → Main public website (mainsite)
-- **admin.kss.org** → Admin panel (frontend)
-- **api.kss.org** → Backend API (optional)
+- **krushnasadasahayte.org** → Main public website (mainsite)
+- **admin.krushnasadasahayte.org** → Admin panel (frontend)
+- **api.krushnasadasahayte.org** → Backend API (optional)
 
 ## 🚀 મુખ્ય Steps
 
@@ -52,9 +52,9 @@
 - `DEPLOYMENT_GUIDE.md` - Complete detailed guide (English)
 - `QUICK_DEPLOY.md` - Quick checklist (English)
 - `nginx-configs/` - Nginx configuration files
-  - `kss.org.conf` - Main site config
-  - `admin.kss.org.conf` - Admin panel config
-  - `api.kss.org.conf` - API config (optional)
+  - `krushnasadasahayte.org.conf` - Main site config
+  - `admin.krushnasadasahayte.org.conf` - Admin panel config
+  - `api.krushnasadasahayte.org.conf` - API config (optional)
 - `env-examples/` - Environment variable examples
   - `backend.env.example` - Backend .env example
   - `frontend.env.example` - Frontend .env example
@@ -96,21 +96,21 @@ cd /var/www/kss
 ### Backend (.env)
 - `MONGODB_URI` - MongoDB connection string
 - `JWT_SECRET` - Strong secret key (minimum 32 characters)
-- `CORS_ORIGIN` - https://admin.kss.org
+- `CORS_ORIGIN` - https://admin.krushnasadasahayte.org
 - `PORT` - 3000
 
 ### Frontend (.env.production)
-- `VITE_API_URL` - https://api.kss.org/api (or https://kss.org/api)
+- `VITE_API_URL` - https://api.krushnasadasahayte.org/api (or https://krushnasadasahayte.org/api)
 
 ### Mainsite (.env.production)
-- `VITE_API_URL` - https://api.kss.org/api (or https://kss.org/api)
+- `VITE_API_URL` - https://api.krushnasadasahayte.org/api (or https://krushnasadasahayte.org/api)
 
 ## ✅ Verification
 
 Deployment પછી check કરો:
-- ✅ https://kss.org - Main site load થાય છે?
-- ✅ https://admin.kss.org - Admin panel load થાય છે?
-- ✅ https://api.kss.org/api/health - API working છે?
+- ✅ https://krushnasadasahayte.org - Main site load થાય છે?
+- ✅ https://admin.krushnasadasahayte.org - Admin panel load થાય છે?
+- ✅ https://api.krushnasadasahayte.org/api/health - API working છે?
 - ✅ Admin panel માં login થઈ શકે છે?
 
 ## 🆘 Common Issues

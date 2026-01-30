@@ -77,7 +77,7 @@ npm run seed:admin
 ```
 
 This will create a super admin with:
-- Email: `admin@kss.org`
+- Email: `admin@krushnasadasahayte.org`
 - Mobile: `1234567890`
 - Password: `Admin@123`
 
@@ -120,7 +120,7 @@ You should get:
 curl -X POST http://localhost:3000/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{
-    "email": "admin@kss.org",
+    "email": "admin@krushnasadasahayte.org",
     "password": "Admin@123"
   }'
 ```
@@ -134,7 +134,7 @@ Response:
     "user": {
       "_id": "...",
       "name": "Super Admin",
-      "email": "admin@kss.org",
+      "email": "admin@krushnasadasahayte.org",
       "role": "SUPER_ADMIN"
     },
     "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
