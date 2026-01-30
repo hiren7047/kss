@@ -4,6 +4,16 @@ Use these configs **as-is** by copying from the repo. Do **not** create files ma
 
 **App root:** `/var/www/kss/kss` (git clone creates a `kss` subfolder).
 
+## Which URL serves what
+
+| URL | Serves |
+|-----|--------|
+| **krushnasadasahayte.org** / **www.krushnasadasahayte.org** | **Mainsite** (public website) — `mainsite/dist` |
+| **admin.krushnasadasahayte.org** | **Admin panel** (login/dashboard) — `frontend/dist` |
+| **api.krushnasadasahayte.org** | **API** (backend proxy to port 3000) |
+
+The **main site** config is `default_server`: IP access (e.g. 82.112.234.87) and any unknown Host get the mainsite, not the admin.
+
 ## 1. Copy configs (run from VPS)
 
 ```bash
